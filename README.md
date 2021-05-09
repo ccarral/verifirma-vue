@@ -1,24 +1,13 @@
-# camera-access
+# Front end de sistema verifirma
 
-## Project setup
+Para poder ejecutar el proyecto, se necesita tener node instalado y npm.
+
+## Instalación
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Ejecutar para desarrollo
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="centerColumn">
+    <div class="centerColumn" v-show="this.state == states.AWAITING_INPUT">
       <img id="hdrImg" src="uaemex2.png" alt="" />
       <div id="header">
         <h2>Sistema de verificación biométrica</h2>
@@ -59,10 +59,27 @@
           </tr>
           <tr>
             <td colspan="100%">
-              <div class="belowFrames"><button>Enviar</button></div>
+              <div class="belowFrames">
+                <button v-on:click="makeRequest">Enviar</button>
+              </div>
             </td>
           </tr>
         </table>
+      </div>
+    </div>
+    <div class="centerColumn" v-if="this.state == states.PROCESSING">
+      <h1>Espere un momento por favor...</h1>
+      <Circle2 class="centerColumn"></Circle2>
+    </div>
+    <div class="centerColumn" v-if="this.state == states.RECEIVED_RESPONSE">
+      <div v-if="this.verified">
+        <h1>Identidad validada exitosamente</h1>
+        <img class="acceptanceImg centerColumn" src="ok.webp" alt="" />
+      </div>
+      <div v-else>
+        <h1>No fue posible validar su identidad</h1>
+        <img class="acceptanceImg centerColumn" src="not_ok.webp" alt="" />
+        <button v-on:click="reset">Intentar de nuevo</button>
       </div>
     </div>
   </div>
@@ -71,15 +88,30 @@
 <script>
 // eslint-disable-next-line
 import Webcam from "webcam-easy";
+import axios from "axios";
+import sha256 from "crypto-js/sha256";
+import { Circle2 } from "vue-loading-spinner";
+
+const states = {
+  AWAITING_INPUT: "Esperando entrada",
+  PROCESSING: "Procesando imágen",
+  RECEIVED_RESPONSE: "Respuesta recibida"
+};
 
 export default {
   name: "MainSplash",
+  components: {
+    Circle2
+  },
   data() {
     return {
       webcam: null,
       lastPicture: null,
       numCuenta: null,
-      password: null
+      password: null,
+      state: states.AWAITING_INPUT,
+      states,
+      verified: false
     };
   },
   mounted: function() {
@@ -107,6 +139,35 @@ export default {
   methods: {
     snapPicture: function() {
       this.lastPicture = this.webcam.snap();
+    },
+    makeRequest: function() {
+      this.state = states.PROCESSING;
+
+      let formData = new FormData();
+      let rawData = JSON.stringify({
+        num_cuenta: "1673976",
+        hash: sha256("NPNDP.16B")
+      });
+      axios
+        .post("http://localhost:5000/api/validar", {
+          num_cuenta: "1673976",
+          hash: sha256("NPNDP.16B"),
+          base64_encoded_photo: this.lastPicture
+        })
+        .then(res => {
+          console.log(res.data);
+          this.state = states.RECEIVED_RESPONSE;
+          this.verified = res.data.valid;
+        })
+        .catch(err => {
+          console.error("Error!");
+          console.log(err.response);
+        });
+    },
+    reset: function() {
+      this.lastPicture = null;
+      this.password = "";
+      this.state = states.AWAITING_INPUT;
     }
   }
 };
@@ -178,5 +239,10 @@ table#inputTable td {
   border: none;
   border-radius: 5px;
   font-style: bold;
+}
+
+.acceptanceImg {
+  width: 200px;
+  height: auto;
 }
 </style>

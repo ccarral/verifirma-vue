@@ -1,0 +1,23 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+0	Session.vim	/^normal! 0$/;"	m
+015|	Session.vim	/^normal! 015|$/;"	m
+SessionLoad	Session.vim	/^let SessionLoad = 1$/;"	v
+devServer	vue.config.js	/^  devServer : {$/;"	P
+exports	babel.config.js	/^module.exports = {$/;"	P
+exports	vue.config.js	/^module.exports = {$/;"	P
+g:this_obsession	Session.vim	/^let g:this_obsession = v:this_session$/;"	v
+g:this_session	Session.vim	/^let g:this_session = v:this_session$/;"	v
+hotOnly	vue.config.js	/^    hotOnly : false,$/;"	P
+https	vue.config.js	/^    https : true,$/;"	P
+presets	babel.config.js	/^  presets: [$/;"	P
+s:l	Session.vim	/^let s:l = 21 - ((9 * winheight(0) + 10) \/ 20)$/;"	v
+s:l	Session.vim	/^let s:l = 8 - ((7 * winheight(0) + 10) \/ 21)$/;"	v
+s:so_save	Session.vim	/^let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0$/;"	v
+s:sx	Session.vim	/^let s:sx = expand("<sfile>:p:r")."x.vim"$/;"	v
+s:wipebuf	Session.vim	/^  let s:wipebuf = bufnr('%')$/;"	v
+zt	Session.vim	/^normal! zt$/;"	m
