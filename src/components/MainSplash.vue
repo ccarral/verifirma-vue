@@ -50,12 +50,12 @@
           <tr>
             <td>Número de cuenta</td>
             <td>
-              <input name="numero-cuenta" type="text" />
+              <input name="numero-cuenta" type="text" v-model="numCuenta" />
             </td>
           </tr>
           <tr>
             <td>Contraseña</td>
-            <td><input type="password" /></td>
+            <td><input type="password" v-model="password" /></td>
           </tr>
           <tr>
             <td colspan="100%">
@@ -75,6 +75,16 @@
       <div v-if="this.verified">
         <h1>Identidad validada exitosamente</h1>
         <img class="acceptanceImg centerColumn" src="ok.webp" alt="" />
+        <div id="hash-frame">
+          Bienvenido:
+          <br />
+          <div class="grey-frame">
+            {{ primer_apellido }} {{ segundo_apellido }}, {{ nombres }}
+          </div>
+          <br />
+          Firma sigital:
+          <div class="grey-frame">{{ key }}</div>
+        </div>
       </div>
       <div v-else>
         <h1>No fue posible validar su identidad</h1>
@@ -90,6 +100,7 @@
 import Webcam from "webcam-easy";
 import axios from "axios";
 import sha256 from "crypto-js/sha256";
+import Base64 from "crypto-js/enc-base64";
 import { Circle2 } from "vue-loading-spinner";
 
 const states = {
@@ -107,11 +118,15 @@ export default {
     return {
       webcam: null,
       lastPicture: null,
-      numCuenta: null,
-      password: null,
+      numCuenta: "",
+      password: "",
       state: states.AWAITING_INPUT,
       states,
-      verified: false
+      verified: false,
+      key: "",
+      nombres: "",
+      primer_apellido: "",
+      segundo_apellido: ""
     };
   },
   mounted: function() {
@@ -129,7 +144,6 @@ export default {
       .start()
       .then(result => {
         console.log("webcam started");
-        console.log(result);
       })
       .catch(err => {
         console.log("Error al inicializar la cámara");
@@ -144,20 +158,22 @@ export default {
       this.state = states.PROCESSING;
 
       let formData = new FormData();
-      let rawData = JSON.stringify({
-        num_cuenta: "1673976",
-        hash: sha256("NPNDP.16B")
-      });
+      let hash = sha256(this.password);
+
       axios
         .post("http://localhost:5000/api/validar", {
-          num_cuenta: "1673976",
-          hash: sha256("NPNDP.16B"),
+          num_cuenta: this.numCuenta,
+          hash: hash.toString(),
           base64_encoded_photo: this.lastPicture
         })
         .then(res => {
           console.log(res.data);
           this.state = states.RECEIVED_RESPONSE;
           this.verified = res.data.valid;
+          this.key = res.data.key;
+          this.nombres = res.data.nombres;
+          this.primer_apellido = res.data.primer_apellido;
+          this.segundo_apellido = res.data.segundo_apellido;
         })
         .catch(err => {
           console.error("Error!");
@@ -244,5 +260,14 @@ table#inputTable td {
 .acceptanceImg {
   width: 200px;
   height: auto;
+}
+
+.grey-frame {
+  background: #cdcdcd;
+}
+
+#hash-frame {
+  font-size: 30px;
+  font-weight: bold;
 }
 </style>
